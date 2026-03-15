@@ -7,4 +7,9 @@ tmep
 run_pipe.ipynb
 dep_graph.graphml
 symbol_index.db
+kaggle.yml
+api_keys.txt
+notebook.ipynb
+kernel-metadata.json
+agent-python.rar
 .env

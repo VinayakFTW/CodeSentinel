@@ -16,11 +16,11 @@ from pipelines.qa import QAPipeline
 from pipelines.review import ReviewPipeline
 from pipelines.docs import DocsPipeline
 
-SOURCE_DIR  = os.environ.get("SOURCE_DIR", ".")
-GRAPH_PATH  = os.environ.get("DEP_GRAPH_PATH", "dep_graph.graphml")
-SYMBOL_DB   = os.environ.get("SYMBOL_DB_PATH",  "symbol_index.db")
-VECTOR_DIR  = os.environ.get("PERSIST_DIRECTORY", "chroma_db")
-DOCS_DIR    = os.environ.get("DOCS_DIR", "docs")
+SOURCE_DIR  = os.environ.get("SOURCE_DIR")
+GRAPH_PATH  = os.environ.get("DEP_GRAPH_PATH")
+SYMBOL_DB   = os.environ.get("SYMBOL_DB_PATH")
+VECTOR_DIR  = os.environ.get("PERSIST_DIRECTORY")
+DOCS_DIR    = os.environ.get("DOCS_DIR")
 
 BANNER = """
 ========================================================
@@ -117,7 +117,7 @@ def main():
             docs_pipeline.retriever = retriever
         else:
             print("Invalid choice.")
-
+        break
 
 if __name__ == "__main__":
     main()

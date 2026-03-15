@@ -74,7 +74,8 @@ class DependencyGraph:
                 # Try to resolve the import to a file in the repo
                 resolved = self._resolve_import(imp.imported_module, repo_root)
                 if resolved and resolved != src:
-                    self.graph.add_edge(src, resolved, names=imp.imported_names)
+                    # GraphML only supports primitive types — serialize list to string
+                    self.graph.add_edge(src, resolved, names=",".join(imp.imported_names))
 
         print(
             f"[DepGraph] Graph built: {self.graph.number_of_nodes()} nodes, "
@@ -111,7 +112,7 @@ class DependencyGraph:
     def get_file_symbols(self, filepath: str) -> List[str]:
         """Return names of all functions/classes defined in `filepath`."""
         return self._file_symbols.get(filepath, [])
-
+    
     def expand_context(
         self,
         seed_files: List[str],

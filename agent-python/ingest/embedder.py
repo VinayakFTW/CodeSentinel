@@ -118,7 +118,7 @@ def build_vector_store(
     )
 
     # Batch to avoid OOM on large repos
-    BATCH = 64
+    BATCH = 1
     db = None
     for i in range(0, len(docs), BATCH):
         batch = docs[i : i + BATCH]
