@@ -33,12 +33,31 @@ load_dotenv()
 # ---------------------------------------------------------------------------
 # Offline Model Path Resolution
 # ---------------------------------------------------------------------------
-if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    bundle_dir = sys._MEIPASS
+if getattr(sys, 'frozen', False):
+    # The directory where the .exe is located (e.g., dist/)
+    exe_dir = os.path.dirname(sys.executable)
+    
+    # 1. PyInstaller 5.3+ puts bundled data in the _internal folder
+    internal_path = os.path.join(exe_dir, "_internal", "offline_model")
+    
+    # 2. Older PyInstaller versions or manual placement next to the .exe
+    primary_path = os.path.join(exe_dir, "offline_model")
+    
+    # 3. Fallback for testing from within the dist folder before moving
+    fallback_path = os.path.join(os.path.dirname(exe_dir), "offline_model")
+    
+    if os.path.exists(internal_path):
+        OFFLINE_MODEL_PATH = internal_path
+    elif os.path.exists(primary_path):
+        OFFLINE_MODEL_PATH = primary_path
+    elif os.path.exists(fallback_path):
+        OFFLINE_MODEL_PATH = fallback_path
+    else:
+        OFFLINE_MODEL_PATH = internal_path # Default fallback
 else:
+    # Running as a normal Python script
     bundle_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-OFFLINE_MODEL_PATH = os.path.join(bundle_dir, "offline_model")
+    OFFLINE_MODEL_PATH = os.path.join(bundle_dir, "offline_model")
 
 if os.path.exists(OFFLINE_MODEL_PATH):
     EMBEDDING_MODEL_NAME = OFFLINE_MODEL_PATH
