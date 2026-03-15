@@ -109,10 +109,26 @@ class DependencyGraph:
         """Return files that define `symbol_name`."""
         return list(set(self._definitions.get(symbol_name, [])))
 
+    def _get_node(self, node_path: str) -> Optional[str]:
+        """Safely resolve an absolute or relative path to a graph node."""
+        if node_path in self.graph.nodes:
+            return node_path
+        
+        # Normalize slashes for safe cross-platform comparison
+        norm_path = node_path.replace('\\', '/')
+        
+        for n in self.graph.nodes:
+            if norm_path.endswith(n.replace('\\', '/')):
+                return n
+        return None
+
     def get_file_symbols(self, filepath: str) -> List[str]:
         """Return names of all functions/classes defined in `filepath`."""
-        return self._file_symbols.get(filepath, [])
-    
+        actual_node = self._get_node(filepath)
+        if actual_node and actual_node in self._file_symbols:
+            return self._file_symbols[actual_node]
+        return []
+        
     def expand_context(
         self,
         seed_files: List[str],
@@ -171,8 +187,12 @@ class DependencyGraph:
     # ------------------------------------------------------------------
 
     def _bfs_neighbors(self, node: str, direction: str, hops: int) -> Set[str]:
+        actual_node = self._get_node(node)
+        if not actual_node:
+            return set()
+            
         visited: Set[str] = set()
-        frontier = {node}
+        frontier = {actual_node}
         for _ in range(hops):
             next_frontier: Set[str] = set()
             for n in frontier:
@@ -180,7 +200,7 @@ class DependencyGraph:
                     neighbours = set(self.graph.successors(n))
                 else:
                     neighbours = set(self.graph.predecessors(n))
-                next_frontier |= neighbours - visited - {node}
+                next_frontier |= neighbours - visited - {actual_node}
             visited |= next_frontier
             frontier = next_frontier
         return visited
