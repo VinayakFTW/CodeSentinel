@@ -4,7 +4,7 @@
 set -e
 
 echo "========================================================"
-echo "      🛡️ Code-Sentinel v2 - Linux Installation Script    "
+echo "      🛡️ Code-Sentinel v1 - Linux Installation Script    "
 echo "========================================================"
 
 # 1. Check for Python 3.10+
